@@ -8,6 +8,7 @@ class ImageGetter:
     def __init__(self) -> None:
         self.cam = cv2.VideoCapture(0)
         print("Cam init successful")
+        # todo: Check if cam is being used already
 
     def GetImage(self):
         result, img = self.cam.read()
