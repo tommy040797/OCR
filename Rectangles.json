@@ -1,0 +1,18 @@
+{
+  "Rectangles": [
+    {
+      "name": "Zeit",
+      "xstart": 27,
+      "ystart": 30,
+      "xend": 50,
+      "yend": 50
+    },
+    {
+      "name": "Drittel",
+      "xstart": 27,
+      "ystart": 30,
+      "xend": 50,
+      "yend": 50
+    }
+  ]
+}
