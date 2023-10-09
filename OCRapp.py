@@ -92,7 +92,7 @@ while True:
             cv2.waitKey(0)
 
     # if lastresultdict != resultdict:
-    # with open("log.json", "a") as f:
+    # with open("./logs/log.json", "a") as f:
     # json.dump(resultdict, f)
     # f.write(os.linesep)
     # lastresultdict = resultdict.copy()
