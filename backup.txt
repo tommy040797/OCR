@@ -1,0 +1,21 @@
+        h, w = rectangleDict[item].shape
+
+        boxes = pytesseract.image_to_boxes(
+            rectangleDict[item], lang="deu", config="--psm 7"
+        )
+        imgboxes = rectangleDict[item]
+        for b in boxes.splitlines():
+            b = b.split(" ")
+            imgboxes = cv2.rectangle(
+                rectangleDict[item],
+                (int(b[1]), h - int(b[2])),
+                (int(b[3]), h - int(b[4])),
+                (0, 255, 0),
+                2,
+            )
+        print(boxes)
+        cv2.imshow("test", imgboxes)
+        cv2.waitKey(0)
+
+
+    ^boxen um die eraknnten zeichen

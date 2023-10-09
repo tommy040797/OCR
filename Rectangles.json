@@ -2,17 +2,59 @@
   "Rectangles": [
     {
       "name": "Zeit",
-      "xstart": 27,
-      "ystart": 30,
-      "xend": 50,
-      "yend": 50
+      "xstart": 600,
+      "ystart": 500,
+      "xend": 1250,
+      "yend": 640
+    },
+    {
+      "name": "ScoreHeim",
+      "xstart": 833,
+      "ystart": 156,
+      "xend": 956,
+      "yend": 267
+    },
+    {
+      "name": "ScoreGuest",
+      "xstart": 1111,
+      "ystart": 156,
+      "xend": 1244,
+      "yend": 267
+    },
+    {
+      "name": "HeimStrafzeitNummer1",
+      "xstart": 815,
+      "ystart": 300,
+      "xend": 871,
+      "yend": 367
+    },
+    {
+      "name": "HeimStrafzeitZeit1",
+      "xstart": 867,
+      "ystart": 300,
+      "xend": 1033,
+      "yend": 367
+    },
+    {
+      "name": "GastStrafzeitNummer1",
+      "xstart": 1048,
+      "ystart": 300,
+      "xend": 1130,
+      "yend": 367
+    },
+    {
+      "name": "GastStrafzeitZeit1",
+      "xstart": 1120,
+      "ystart": 300,
+      "xend": 1275,
+      "yend": 367
     },
     {
       "name": "Drittel",
-      "xstart": 27,
-      "ystart": 30,
-      "xend": 50,
-      "yend": 50
+      "xstart": 858,
+      "ystart": 619,
+      "xend": 961,
+      "yend": 696
     }
   ]
 }

@@ -1,1 +1,2 @@
 cv2
+https://github.com/UB-Mannheim/tesseract/wiki#tesseract-installer-for-windows
