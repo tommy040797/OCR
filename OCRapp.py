@@ -4,7 +4,6 @@ import cv2
 import time
 import json
 import Util.Methods as dictcreator
-import pytesseract
 import sys
 import os
 
@@ -28,23 +27,22 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 inpluginname = config["InterfacesToUse"]["input"]
 outpluginname = config["InterfacesToUse"]["output"]
+ocrpluginname = config["InterfacesToUse"]["ocr"]
 pollingrate = 1 / float(config["Frequency"]["pollingrate"])
-camresx = int(config["captureWebcam"]["ResolutionX"])
-camresy = int(config["captureWebcam"]["ResolutionY"])
-tesseractpath = config["DEFAULT"]["pathtotesseract"]
-custom_config = config["DEFAULT"]["tesseractcustomconfigstring"]
+logname = config["logs"]["logname"]
+log = config["logs"]["log"]
+debugging = config["DEBUGGING"]["JedesBildEinzelnBestaetigen"]
 
-# Initialize PLugins
-pytesseract.pytesseract.tesseract_cmd = tesseractpath
+# Initialize Plugins
 inpluginstringprefix = "plugins.plugins_in."
 outpluginstringprefix = "plugins.plugins_out."
+ocrpluginprefix = "plugins.plugins_ocr."
 inmodule = importlib.import_module(inpluginstringprefix + inpluginname, ".")
 outmodule = importlib.import_module(outpluginstringprefix + outpluginname, ".")
+ocrmodule = importlib.import_module(ocrpluginprefix + ocrpluginname, ".")
 
-if inpluginname == "captureWebcam":
-    inplugin = inmodule.ImageGetter(camresx, camresy)
-elif inpluginname == "captureNDI":
-    inplugin = inmodule.ImageGetter()
+inplugin = inmodule.ImageGetter()
+ocrplugin = ocrmodule.OCR()
 
 
 # Read Rectangles subject to OCR
@@ -60,40 +58,15 @@ with open("Rectangles.json", "r") as openfile:
 
 lastresultdict = {}
 resultdict = {}
-
 while True:
     img = inplugin.GetImage()
     rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
     for item in rectangleDict:
-        resultdict[item] = pytesseract.image_to_string(
-            rectangleDict[item],
-            lang="deu",
-            config=custom_config,
-        )
-        if item == "Zeit":
+        resultdict[item] = ocrplugin.ReadText(rectangleDict[item])
+        if debugging == "True":
             print(resultdict[item])
-            h, w = rectangleDict[item].shape
-
-            boxes = pytesseract.image_to_boxes(
-                rectangleDict[item], lang="deu", config="--psm 7"
-            )
-            imgboxes = rectangleDict[item]
-            for b in boxes.splitlines():
-                b = b.split(" ")
-                imgboxes = cv2.rectangle(
-                    rectangleDict[item],
-                    (int(b[1]), h - int(b[2])),
-                    (int(b[3]), h - int(b[4])),
-                    (0, 255, 0),
-                    2,
-                )
-            print(boxes)
-            cv2.imshow("test", imgboxes)
+            cv2.imshow("test", rectangleDict[item])
             cv2.waitKey(0)
 
-    # if lastresultdict != resultdict:
-    # with open("./logs/log.json", "a") as f:
-    # json.dump(resultdict, f)
-    # f.write(os.linesep)
-    # lastresultdict = resultdict.copy()
+
     # time.sleep(pollingrate)
