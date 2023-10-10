@@ -68,5 +68,11 @@ while True:
             cv2.imshow("test", rectangleDict[item])
             cv2.waitKey(0)
 
-
+    if lastresultdict != resultdict:
+        if log == "True":  # TODO: das hier als Plugin implementieren
+            loglocation = "./logs/" + logname + ".json"
+            with open(loglocation, "a") as f:
+                json.dump(resultdict, f)
+                f.write(os.linesep)
+        lastresultdict = resultdict.copy()
     # time.sleep(pollingrate)
