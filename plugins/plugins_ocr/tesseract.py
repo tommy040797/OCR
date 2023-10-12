@@ -20,5 +20,5 @@ class OCR:
             lang=self.language,
             config=self.config,
         )
-        ocrresult = ocrresult.strip()
+        # ocrresult = ocrresult.strip()
         return ocrresult

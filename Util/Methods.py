@@ -18,6 +18,7 @@ def preProcessing(img, blur, grayscale, thresholding, negative):
     if grayscale == "True":
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     if thresholding == "True":
+        img = cv2.GaussianBlur(img, (5, 5), 0)
         img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     if negative == "True":
         img = 255 - img

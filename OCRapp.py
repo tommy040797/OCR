@@ -6,6 +6,7 @@ import json
 import Util.Methods as dictcreator
 import sys
 import os
+import pytesseract
 
 
 importlib.import_module
@@ -60,19 +61,24 @@ lastresultdict = {}
 resultdict = {}
 while True:
     img = inplugin.GetImage()
-    rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
-    for item in rectangleDict:
-        resultdict[item] = ocrplugin.ReadText(rectangleDict[item])
-        if debugging == "True":
-            print(resultdict[item])
-            cv2.imshow("test", rectangleDict[item])
-            cv2.waitKey(0)
+    # img = img[0:720, 800:1280]
+    img = cv2.resize(img, (1920, 1080), interpolation=cv2.INTER_LINEAR)
+    img = img[0:1080, 800:1920]
+    result = ocrplugin.ReadText(img)
+    if debugging == "True":
+        print(result)
+        cv2.imshow("test", img)
+        cv2.waitKey(0)
 
-    if lastresultdict != resultdict:
-        if log == "True":  # TODO: das hier als Plugin implementieren
-            loglocation = "./logs/" + logname + ".json"
-            with open(loglocation, "a") as f:
-                json.dump(resultdict, f)
-                f.write(os.linesep)
-        lastresultdict = resultdict.copy()
+    # if lastresultdict != resultdict:
+    #    if log == "True":  # TODO: das hier als Plugin implementieren
+    #        loglocation = "./logs/" + logname + ".json"
+    #        with open(loglocation, "a") as f:
+    #            json.dump(resultdict, f)
+    #            f.write(os.linesep)
+    #    lastresultdict = resultdict.copy()
     # time.sleep(pollingrate)
+
+    # img = inplugin.GetImage()
+    # rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
+    # for item in rectangleDict:
