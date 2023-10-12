@@ -10,7 +10,7 @@ class OCR:
         self.language = config["easyOCR"]["language"]
         self.whitelist = config["easyOCR"]["whitelist"]
         self.batchsize = int(config["easyOCR"]["batchsize"])
-        self.reader = easyocr.Reader([self.language])
+        self.reader = easyocr.Reader([self.language], quantize=True)
         print("easyOCR plugin initialized")
 
     def ReadText(self, img):
@@ -20,6 +20,7 @@ class OCR:
             mag_ratio=2.0,  # ! keine ahnung was es macht, repariert aber die 1 und die 7 wenn sie alleine stehen. vermutlich eingabebilder zu klein ? evtl bilder hochskalieren und ohne testen
             allowlist=self.whitelist,
             batch_size=self.batchsize,
+            # workers=2,
         )
         # print(
         # self.reader.readtext(

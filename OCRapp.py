@@ -6,6 +6,7 @@ import json
 import Util.Methods as dictcreator
 import sys
 import os
+from timeit import default_timer as timer
 
 
 importlib.import_module
@@ -59,6 +60,8 @@ with open("Rectangles.json", "r") as openfile:
 lastresultdict = {}
 resultdict = {}
 while True:
+    start = timer()
+
     img = inplugin.GetImage()
     rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
     for item in rectangleDict:
@@ -75,4 +78,9 @@ while True:
                 json.dump(resultdict, f)
                 f.write(os.linesep)
         lastresultdict = resultdict.copy()
-    # time.sleep(pollingrate)
+    end = timer()
+    rest = pollingrate - (end - start)
+    # print(rest)
+    if rest < 0:
+        rest = 0
+    time.sleep(rest)
