@@ -1,8 +1,15 @@
 {
   "Rectangles": [
     {
-      "name": "Time",
+      "name": "Minutes",
       "xstart": 900,
+      "ystart": 500,
+      "xend": 1010,
+      "yend": 640
+    },
+    {
+      "name": "Seconds",
+      "xstart": 1047,
       "ystart": 500,
       "xend": 1220,
       "yend": 640
@@ -29,8 +36,15 @@
       "yend": 367
     },
     {
-      "name": "HeimStrafzeitZeit1",
+      "name": "HeimStrafzeitZeit1Minuten",
       "xstart": 870,
+      "ystart": 300,
+      "xend": 933,
+      "yend": 367
+    },
+    {
+      "name": "HeimStrafzeitZeit1Sekunden",
+      "xstart": 954,
       "ystart": 300,
       "xend": 1033,
       "yend": 367
@@ -43,8 +57,15 @@
       "yend": 367
     },
     {
-      "name": "GastStrafzeitZeit1",
+      "name": "GastStrafzeitZeit1Minuten",
       "xstart": 1120,
+      "ystart": 300,
+      "xend": 1175,
+      "yend": 367
+    },
+    {
+      "name": "GastStrafzeitZeit1Sekunden",
+      "xstart": 1202,
       "ystart": 300,
       "xend": 1271,
       "yend": 367
