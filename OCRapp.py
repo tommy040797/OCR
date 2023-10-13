@@ -7,6 +7,8 @@ import Util.Methods as dictcreator
 import sys
 import os
 from timeit import default_timer as timer
+import cProfile as profile
+import pstats
 
 
 importlib.import_module
@@ -46,6 +48,10 @@ inplugin = inmodule.ImageGetter()
 ocrplugin = ocrmodule.OCR()
 
 
+prof = profile.Profile()
+prof.enable()
+
+
 # Read Rectangles subject to OCR
 with open("Rectangles.json", "r") as openfile:
     json_object = json.load(openfile)
@@ -59,7 +65,7 @@ with open("Rectangles.json", "r") as openfile:
 
 lastresultdict = {}
 resultdict = {}
-while True:
+for i in range(10):
     start = timer()
 
     img = inplugin.GetImage()
@@ -84,3 +90,7 @@ while True:
     if rest < 0:
         rest = 0
     time.sleep(rest)
+
+prof.disable()
+stats = pstats.Stats(prof).strip_dirs().sort_stats("cumtime")
+stats.print_stats(30)  # top 10 rows
