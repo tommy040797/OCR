@@ -11,7 +11,7 @@
       "name": "Seconds",
       "xstart": 1047,
       "ystart": 500,
-      "xend": 1220,
+      "xend": 1210,
       "yend": 640
     },
     {
@@ -37,10 +37,10 @@
     },
     {
       "name": "HeimStrafzeitZeit1Minuten",
-      "xstart": 870,
-      "ystart": 300,
+      "xstart": 895,
+      "ystart": 310,
       "xend": 933,
-      "yend": 367
+      "yend": 364
     },
     {
       "name": "HeimStrafzeitZeit1Sekunden",
@@ -51,14 +51,14 @@
     },
     {
       "name": "GastStrafzeitNummer1",
-      "xstart": 1043,
+      "xstart": 1053,
       "ystart": 300,
-      "xend": 1115,
+      "xend": 1107,
       "yend": 367
     },
     {
       "name": "GastStrafzeitZeit1Minuten",
-      "xstart": 1120,
+      "xstart": 1125,
       "ystart": 300,
       "xend": 1175,
       "yend": 367
@@ -72,10 +72,10 @@
     },
     {
       "name": "Drittel",
-      "xstart": 858,
-      "ystart": 619,
+      "xstart": 920,
+      "ystart": 635,
       "xend": 961,
-      "yend": 696
+      "yend": 690
     }
   ]
 }

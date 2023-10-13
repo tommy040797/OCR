@@ -35,6 +35,7 @@ pollingrate = 1 / float(config["Frequency"]["pollingrate"])
 logname = config["logs"]["logname"]
 log = config["logs"]["log"]
 debugging = config["DEBUGGING"]["JedesBildEinzelnBestaetigen"]
+profiling = config["DEBUGGING"]["profiling"]
 
 # Initialize Plugins
 inpluginstringprefix = "plugins.plugins_in."
@@ -47,9 +48,9 @@ ocrmodule = importlib.import_module(ocrpluginprefix + ocrpluginname, ".")
 inplugin = inmodule.ImageGetter()
 ocrplugin = ocrmodule.OCR()
 
-
-prof = profile.Profile()
-prof.enable()
+if profiling == "True":
+    prof = profile.Profile()
+    prof.enable()
 
 
 # Read Rectangles subject to OCR
@@ -65,32 +66,61 @@ with open("Rectangles.json", "r") as openfile:
 
 lastresultdict = {}
 resultdict = {}
-for i in range(10):
-    start = timer()
 
-    img = inplugin.GetImage()
-    rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
-    for item in rectangleDict:
-        resultdict[item] = ocrplugin.ReadText(rectangleDict[item])
-        if debugging == "True":
-            print(resultdict[item])
-            cv2.imshow("test", rectangleDict[item])
-            cv2.waitKey(0)
+if profiling == "True":
+    for i in range(10):
+        start = timer()
+        img = inplugin.GetImage()
+        rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
+        for item in rectangleDict:
+            resultdict[item] = ocrplugin.ReadText(rectangleDict[item])
+            if debugging == "True":
+                print(item + ": ")
+                print(resultdict[item])
+                cv2.imshow("test", rectangleDict[item])
+                cv2.waitKey(0)
 
-    if lastresultdict != resultdict:
-        if log == "True":  # TODO: das hier als Plugin implementieren
-            loglocation = "./logs/" + logname + ".json"
-            with open(loglocation, "a") as f:
-                json.dump(resultdict, f)
-                f.write(os.linesep)
-        lastresultdict = resultdict.copy()
-    end = timer()
-    rest = pollingrate - (end - start)
-    # print(rest)
-    if rest < 0:
-        rest = 0
-    time.sleep(rest)
+        if lastresultdict != resultdict:
+            if log == "True":  # TODO: das hier als Plugin implementieren
+                loglocation = "./logs/" + logname + ".json"
+                with open(loglocation, "a") as f:
+                    json.dump(resultdict, f)
+                    f.write(os.linesep)
+            lastresultdict = resultdict.copy()
+        end = timer()
+        rest = pollingrate - (end - start)
+        # print(rest)
+        if rest < 0:
+            rest = 0
+        time.sleep(rest)
+else:
+    while True:
+        start = timer()
+        img = inplugin.GetImage()
+        rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
+        for item in rectangleDict:
+            resultdict[item] = ocrplugin.ReadText(rectangleDict[item])
+            if debugging == "True":
+                print(item + ": ")
+                print(resultdict[item])
+                cv2.imshow("test", rectangleDict[item])
+                cv2.waitKey(0)
 
-prof.disable()
-stats = pstats.Stats(prof).strip_dirs().sort_stats("cumtime")
-stats.print_stats(30)  # top 10 rows
+        if lastresultdict != resultdict:
+            if log == "True":  # TODO: das hier als Plugin implementieren
+                loglocation = "./logs/" + logname + ".json"
+                with open(loglocation, "a") as f:
+                    json.dump(resultdict, f)
+                    f.write(os.linesep)
+            lastresultdict = resultdict.copy()
+        end = timer()
+        rest = pollingrate - (end - start)
+        # print(rest)
+        if rest < 0:
+            rest = 0
+        time.sleep(rest)
+
+if profiling == "True":
+    prof.disable()
+    stats = pstats.Stats(prof).strip_dirs().sort_stats("cumtime")
+    stats.print_stats(30)  # top 10 rows

@@ -10,7 +10,7 @@ class OCR:
         self.language = config["easyOCR"]["language"]
         self.whitelist = config["easyOCR"]["whitelist"]
         self.batchsize = int(config["easyOCR"]["batchsize"])
-        self.reader = easyocr.Reader([self.language], quantize=True)
+        self.reader = easyocr.Reader([self.language])
         print("easyOCR plugin initialized")
 
     def ReadText(self, img):
