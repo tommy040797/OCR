@@ -13,7 +13,7 @@ config["Tesseract"] = {
     "TesseractCustomConfigString": "-c tessedit_char_whitelist=0123456789: --psm 6",
     "Language": "deu",
 }
-config["easyOCR"] = {"Language": "de", "whitelist": "0123456789:", "batchsize": 1}
+config["easyOCR"] = {"Language": "de", "whitelist": "0123456789:", "batchsize": 32}
 config["logs"] = {"logname": "logs", "log": True}
 config["ImagePreprocessing"] = {
     "Grayscale": True,
@@ -22,7 +22,11 @@ config["ImagePreprocessing"] = {
     "Negative": True,
 }
 
-config["DEBUGGING"] = {"JedesBildEinzelnBestaetigen": True, "Profiling": True}
+config["DEBUGGING"] = {
+    "JedesBildEinzelnBestaetigen": True,
+    "Profiling": True,
+    "profilingZeilen": 30,
+}
 
 with open("config.ini", "w") as configfile:
     config.write(configfile)

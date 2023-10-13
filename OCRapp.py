@@ -36,6 +36,7 @@ logname = config["logs"]["logname"]
 log = config["logs"]["log"]
 debugging = config["DEBUGGING"]["JedesBildEinzelnBestaetigen"]
 profiling = config["DEBUGGING"]["profiling"]
+profilinglines = int(config["DEBUGGING"]["profilingzeilen"])
 
 # Initialize Plugins
 inpluginstringprefix = "plugins.plugins_in."
@@ -123,4 +124,4 @@ else:
 if profiling == "True":
     prof.disable()
     stats = pstats.Stats(prof).strip_dirs().sort_stats("cumtime")
-    stats.print_stats(30)  # top 10 rows
+    stats.print_stats(profilinglines)  # top 10 rows
