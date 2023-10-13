@@ -20,14 +20,5 @@ class OCR:
             mag_ratio=2.0,  # ! keine ahnung was es macht, repariert aber die 1 und die 7 wenn sie alleine stehen. vermutlich eingabebilder zu klein ? evtl bilder hochskalieren und ohne testen
             allowlist=self.whitelist,
             batch_size=self.batchsize,
-            # workers=2,
         )
-        # print(
-        # self.reader.readtext(
-        # img,
-        # mag_ratio=2.0,
-        # allowlist=self.whitelist,
-        # batch_size=self.batchsize,
-        # )
-        # )
         return ocrresult
