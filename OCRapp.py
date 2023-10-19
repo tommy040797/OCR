@@ -115,6 +115,7 @@ if lastresultdict != resultdict:
 # loop
 stoppedcounter = 0
 counter = 0
+
 if profiling == "True":
     for i in range(10):
         start = timer()
@@ -310,6 +311,7 @@ else:
             img = inplugin.GetImage()
             rectangleDict = dictcreator.dictRectangles(rectangles, img)
             rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
+            # read clock
             for item in rectangleDict:
                 resultdict[item] = int(ocrplugin.ReadText(rectangleDict[item])[0])
 
@@ -318,15 +320,17 @@ else:
                     print(resultdict[item])
                     cv2.imshow("test", rectangleDict[item])
                     cv2.waitKey(0)
+            # check if clock is stopped
             if (
                 resultdict["Minutes"] == lastresultdict["Minutes"]
                 and resultdict["Seconds"] == lastresultdict["Seconds"]
             ):
-                stoppedcounter += 1
                 if stoppedcounter == pollingrate - 1:
                     isStopped = True
-
+                    stoppedcounter = 0
+                stoppedcounter += 1
             #!artificial runterzählen
+
             for item in rectangleDictArt:
                 match item:
                     case "HomePenalty1Number":
@@ -477,6 +481,7 @@ else:
                     cv2.waitKey(0)
             if resultdict["Seconds"] != lastresultdict["Seconds"]:
                 isStopped = False
+                stoppedcounter = 0
 
             if lastresultdict != resultdict:
                 if log == "True":  # TODO: das hier als Plugin implementieren
