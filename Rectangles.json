@@ -5,77 +5,88 @@
       "xstart": 900,
       "ystart": 500,
       "xend": 1010,
-      "yend": 640
+      "yend": 640,
+      "artificial": "False"
     },
     {
       "name": "Seconds",
       "xstart": 1047,
       "ystart": 500,
       "xend": 1210,
-      "yend": 640
+      "yend": 640,
+      "artificial": "False"
     },
     {
-      "name": "ScoreHeim",
+      "name": "ScoreHome",
       "xstart": 833,
       "ystart": 156,
       "xend": 956,
-      "yend": 267
+      "yend": 267,
+      "artificial": "True"
     },
     {
       "name": "ScoreGuest",
-      "xstart": 1111,
+      "xstart": 1115,
       "ystart": 156,
-      "xend": 1244,
-      "yend": 267
+      "xend": 1240,
+      "yend": 267,
+      "artificial": "True"
     },
     {
-      "name": "HeimStrafzeitNummer1",
+      "name": "HomePenalty1Number",
       "xstart": 810,
       "ystart": 300,
       "xend": 871,
-      "yend": 367
+      "yend": 367,
+      "artificial": "True"
     },
     {
-      "name": "HeimStrafzeitZeit1Minuten",
+      "name": "HomePenalty1Minutes",
       "xstart": 895,
       "ystart": 310,
       "xend": 933,
-      "yend": 364
+      "yend": 364,
+      "artificial": "True"
     },
     {
-      "name": "HeimStrafzeitZeit1Sekunden",
+      "name": "HomePenalty1Seconds",
       "xstart": 954,
       "ystart": 300,
       "xend": 1033,
-      "yend": 367
+      "yend": 367,
+      "artificial": "True"
     },
     {
-      "name": "GastStrafzeitNummer1",
+      "name": "GuestPenalty1Number",
       "xstart": 1053,
       "ystart": 300,
       "xend": 1107,
-      "yend": 367
+      "yend": 367,
+      "artificial": "True"
     },
     {
-      "name": "GastStrafzeitZeit1Minuten",
+      "name": "GuestPenalty1Minutes",
       "xstart": 1125,
       "ystart": 300,
       "xend": 1175,
-      "yend": 367
+      "yend": 367,
+      "artificial": "True"
     },
     {
-      "name": "GastStrafzeitZeit1Sekunden",
+      "name": "GuestPenalty1Seconds",
       "xstart": 1202,
       "ystart": 300,
       "xend": 1271,
-      "yend": 367
+      "yend": 367,
+      "artificial": "True"
     },
     {
-      "name": "Drittel",
+      "name": "Period",
       "xstart": 920,
       "ystart": 635,
       "xend": 961,
-      "yend": 690
+      "yend": 690,
+      "artificial": "True"
     }
   ]
 }

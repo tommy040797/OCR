@@ -10,6 +10,7 @@ from timeit import default_timer as timer
 import cProfile as profile
 import pstats
 
+# TODO: abtastrate wenn uhr gestoppt und rechtecke augmenten
 
 importlib.import_module
 
@@ -53,41 +54,247 @@ if profiling == "True":
     prof = profile.Profile()
     prof.enable()
 
-
 # Read Rectangles subject to OCR
 with open("Rectangles.json", "r") as openfile:
     json_object = json.load(openfile)
     rectangles = []
+    rectanglesartificial = []
     for item in json_object["Rectangles"]:
-        rectangles.append(
-            Rectangle(
-                item["name"], item["xstart"], item["ystart"], item["xend"], item["yend"]
+        if item["artificial"] == "False":
+            rectangles.append(
+                Rectangle(
+                    item["name"],
+                    item["xstart"],
+                    item["ystart"],
+                    item["xend"],
+                    item["yend"],
+                )
             )
-        )
+        else:
+            rectanglesartificial.append(
+                Rectangle(
+                    item["name"],
+                    item["xstart"],
+                    item["ystart"],
+                    item["xend"],
+                    item["yend"],
+                )
+            )
 
 lastresultdict = {}
 resultdict = {}
+isStopped = True
 
+# erstmaliges befüllen der ergebnisse
+img = inplugin.GetImage()
+rectangleDict = dictcreator.dictRectangles(rectangles, img)
+rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
+for item in rectangleDict:
+    resultdict[item] = int(ocrplugin.ReadText(rectangleDict[item])[0] or 0)
+    if debugging == "True":
+        print(item + ": ")
+        print(resultdict[item])
+        cv2.imshow("test", rectangleDict[item])
+        cv2.waitKey(0)
+for item in rectangleDictArt:
+    resultdict[item] = int(ocrplugin.ReadText(rectangleDictArt[item])[0] or 0)
+    if debugging == "True":
+        print(item + ": ")
+        print(resultdict[item])
+        cv2.imshow("test", rectangleDictArt[item])
+        cv2.waitKey(0)
+if lastresultdict != resultdict:
+    if log == "True":  # TODO: das hier als Plugin implementieren
+        loglocation = "./logs/" + logname + ".json"
+        with open(loglocation, "a") as f:
+            json.dump(resultdict, f)
+            f.write(os.linesep)
+    lastresultdict = resultdict.copy()
+
+
+# loop
+counter = 0
 if profiling == "True":
     for i in range(10):
         start = timer()
-        img = inplugin.GetImage()
-        rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
-        for item in rectangleDict:
-            resultdict[item] = ocrplugin.ReadText(rectangleDict[item])
-            if debugging == "True":
-                print(item + ": ")
-                print(resultdict[item])
-                cv2.imshow("test", rectangleDict[item])
-                cv2.waitKey(0)
+        # uhr ist nicht gestoppt
+        if isStopped == False:
+            img = inplugin.GetImage()
+            rectangleDict = dictcreator.dictRectangles(rectangles, img)
+            rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
+            for item in rectangleDict:
+                resultdict[item] = int(ocrplugin.ReadText(rectangleDict[item])[0])
 
-        if lastresultdict != resultdict:
-            if log == "True":  # TODO: das hier als Plugin implementieren
-                loglocation = "./logs/" + logname + ".json"
-                with open(loglocation, "a") as f:
-                    json.dump(resultdict, f)
-                    f.write(os.linesep)
-            lastresultdict = resultdict.copy()
+                if debugging == "True":
+                    print(item + ": ")
+                    print(resultdict[item])
+                    cv2.imshow("test", rectangleDict[item])
+                    cv2.waitKey(0)
+            if (
+                resultdict["Minutes"] == lastresultdict["Minutes"]
+                and resultdict["Seconds"] == lastresultdict["Seconds"]
+            ):
+                isStopped = True
+
+            #!artificial runterzählen
+            for item in rectangleDictArt:
+                match item:
+                    case "HomePenalty1Number":
+                        if (
+                            lastresultdict["HomePenalty1Seconds"] == 0
+                            and lastresultdict["HomePenalty1Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "HomePenalty1Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["HomePenalty1Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "HomePenalty1Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+                    case "HomePenalty2Number":
+                        if (
+                            lastresultdict["HomePenalty2Seconds"] == 0
+                            and lastresultdict["HomePenalty2Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "HomePenalty2Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["HomePenalty2Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "HomePenalty2Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty1Number":
+                        if (
+                            lastresultdict["GuestPenalty1Seconds"] == 0
+                            and lastresultdict["GuestPenalty1Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "GuestPenalty1Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["GuestPenalty1Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty1Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty2Number":
+                        if (
+                            lastresultdict["GuestPenalty2Seconds"] == 0
+                            and lastresultdict["GuestPenalty2Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "GuestPenalty2Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["GuestPenalty2Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty2Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+
+            print(resultdict)
+            if lastresultdict != resultdict:
+                if log == "True":  # TODO: das hier als Plugin implementieren
+                    loglocation = "./logs/" + logname + ".json"
+                    with open(loglocation, "a") as f:
+                        json.dump(resultdict, f)
+                        f.write(os.linesep)
+                lastresultdict = resultdict.copy()
+            if counter < pollingrate - 1:
+                counter += 1
+            else:
+                counter = 0
+        # Uhr ist gestoppt
+        else:
+            img = inplugin.GetImage()
+            rectangleDict = dictcreator.dictRectangles(rectangles, img)
+            rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
+            for item in rectangleDict:
+                resultdict[item] = int(ocrplugin.ReadText(rectangleDict[item])[0] or 0)
+                if debugging == "True":
+                    print(item + ": ")
+                    print(resultdict[item])
+                    cv2.imshow("test", rectangleDict[item])
+                    cv2.waitKey(0)
+            for item in rectangleDictArt:
+                resultdict[item] = int(
+                    ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                )
+                if debugging == "True":
+                    print(item + ": ")
+                    print(resultdict[item])
+                    cv2.imshow("test", rectangleDictArt[item])
+                    cv2.waitKey(0)
+            if resultdict["Seconds"] != lastresultdict["Seconds"]:
+                isStopped = False
+
+            if lastresultdict != resultdict:
+                if log == "True":  # TODO: das hier als Plugin implementieren
+                    loglocation = "./logs/" + logname + ".json"
+                    with open(loglocation, "a") as f:
+                        json.dump(resultdict, f)
+                        f.write(os.linesep)
+                lastresultdict = resultdict.copy()
         end = timer()
         rest = pollingrate - (end - start)
         # print(rest)
@@ -97,23 +304,186 @@ if profiling == "True":
 else:
     while True:
         start = timer()
-        img = inplugin.GetImage()
-        rectangleDict = dictcreator.dictRectangles(rectangles, inplugin.GetImage())
-        for item in rectangleDict:
-            resultdict[item] = ocrplugin.ReadText(rectangleDict[item])
-            if debugging == "True":
-                print(item + ": ")
-                print(resultdict[item])
-                cv2.imshow("test", rectangleDict[item])
-                cv2.waitKey(0)
+        # uhr ist nicht gestoppt
+        if isStopped == False:
+            img = inplugin.GetImage()
+            rectangleDict = dictcreator.dictRectangles(rectangles, img)
+            rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
+            for item in rectangleDict:
+                resultdict[item] = int(ocrplugin.ReadText(rectangleDict[item])[0])
 
-        if lastresultdict != resultdict:
-            if log == "True":  # TODO: das hier als Plugin implementieren
-                loglocation = "./logs/" + logname + ".json"
-                with open(loglocation, "a") as f:
-                    json.dump(resultdict, f)
-                    f.write(os.linesep)
-            lastresultdict = resultdict.copy()
+                if debugging == "True":
+                    print(item + ": ")
+                    print(resultdict[item])
+                    cv2.imshow("test", rectangleDict[item])
+                    cv2.waitKey(0)
+            if (
+                resultdict["Minutes"] == lastresultdict["Minutes"]
+                and resultdict["Seconds"] == lastresultdict["Seconds"]
+            ):
+                isStopped = True
+
+            #!artificial runterzählen
+            for item in rectangleDictArt:
+                match item:
+                    case "HomePenalty1Number":
+                        if (
+                            lastresultdict["HomePenalty1Seconds"] == 0
+                            and lastresultdict["HomePenalty1Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "HomePenalty1Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["HomePenalty1Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "HomePenalty1Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+                    case "HomePenalty2Number":
+                        if (
+                            lastresultdict["HomePenalty2Seconds"] == 0
+                            and lastresultdict["HomePenalty2Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "HomePenalty2Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["HomePenalty2Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "HomePenalty2Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["HomePenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty1Number":
+                        if (
+                            lastresultdict["GuestPenalty1Seconds"] == 0
+                            and lastresultdict["GuestPenalty1Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "GuestPenalty1Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["GuestPenalty1Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty1Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty1Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty2Number":
+                        if (
+                            lastresultdict["GuestPenalty2Seconds"] == 0
+                            and lastresultdict["GuestPenalty2Minutes"] == 0
+                        ):
+                            resultdict[item] = 0
+                    case "GuestPenalty2Minutes":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict["GuestPenalty2Seconds"] == 0:
+                                    resultdict[item] = lastresultdict[item] - 1
+                                else:
+                                    resultdict[item] = lastresultdict[item]
+                    case "GuestPenalty2Seconds":
+                        if (
+                            lastresultdict[item] != 0
+                            or lastresultdict["GuestPenalty2Minutes"] != 0
+                        ):
+                            if counter == pollingrate - 1:
+                                if lastresultdict[item] == 0:
+                                    resultdict[item] = 59
+                                else:
+                                    resultdict[item] = lastresultdict[item] - 1
+                            else:
+                                resultdict[item] = lastresultdict[item]
+
+            print(resultdict)
+            if lastresultdict != resultdict:
+                if log == "True":  # TODO: das hier als Plugin implementieren
+                    loglocation = "./logs/" + logname + ".json"
+                    with open(loglocation, "a") as f:
+                        json.dump(resultdict, f)
+                        f.write(os.linesep)
+                lastresultdict = resultdict.copy()
+            if counter < pollingrate - 1:
+                counter += 1
+            else:
+                counter = 0
+        # Uhr ist gestoppt
+        else:
+            img = inplugin.GetImage()
+            rectangleDict = dictcreator.dictRectangles(rectangles, img)
+            rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
+            for item in rectangleDict:
+                resultdict[item] = int(ocrplugin.ReadText(rectangleDict[item])[0] or 0)
+                if debugging == "True":
+                    print(item + ": ")
+                    print(resultdict[item])
+                    cv2.imshow("test", rectangleDict[item])
+                    cv2.waitKey(0)
+            for item in rectangleDictArt:
+                resultdict[item] = int(
+                    ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                )
+                if debugging == "True":
+                    print(item + ": ")
+                    print(resultdict[item])
+                    cv2.imshow("test", rectangleDictArt[item])
+                    cv2.waitKey(0)
+            if resultdict["Seconds"] != lastresultdict["Seconds"]:
+                isStopped = False
+
+            if lastresultdict != resultdict:
+                if log == "True":  # TODO: das hier als Plugin implementieren
+                    loglocation = "./logs/" + logname + ".json"
+                    with open(loglocation, "a") as f:
+                        json.dump(resultdict, f)
+                        f.write(os.linesep)
+                lastresultdict = resultdict.copy()
+            print(resultdict)
+        print(isStopped)
         end = timer()
         rest = pollingrate - (end - start)
         # print(rest)
