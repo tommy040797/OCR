@@ -10,7 +10,7 @@ from timeit import default_timer as timer
 import cProfile as profile
 import pstats
 
-# TODO: abtastrate wenn uhr gestoppt und rechtecke augmenten
+# TODO: abtastrate wenn uhr gestoppt und rechtecke augmenten, BUG wenn
 
 importlib.import_module
 
@@ -332,6 +332,8 @@ else:
                     isStopped = True
                     stoppedcounter = 0
                 stoppedcounter += 1
+            else:
+                stoppedcounter = 0
 
             # rotierer zum periodischen überprüfen
             for item in rectangleDictArt:
@@ -429,7 +431,6 @@ else:
                                 or lastresultdict["HomePenalty1Minutes"] != 0
                             ):
                                 if counter == pollingratenotreziprog - 1:
-                                    print("test1232trgesdjbkvöd")
                                     if lastresultdict[item] == 0:
                                         resultdict[item] = 59
                                     else:
@@ -578,12 +579,13 @@ else:
                         f.write(os.linesep)
                 lastresultdict = resultdict.copy()
             print(resultdict)
-        print(isStopped)
+        print("stopped:", isStopped)
         end = timer()
         rest = pollingrate - (end - start)
         # print(rest)
         if rest < 0:
             rest = 0
+            print("UPDATERATE KANN NICHT EINGEHALTEN WERDEN, ERGEBNISSE FALSCH")
         time.sleep(rest)
 
 if profiling == "True":
