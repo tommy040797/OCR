@@ -113,6 +113,7 @@ if lastresultdict != resultdict:
 
 
 # loop
+stoppedcounter = 0
 counter = 0
 if profiling == "True":
     for i in range(10):
@@ -321,7 +322,9 @@ else:
                 resultdict["Minutes"] == lastresultdict["Minutes"]
                 and resultdict["Seconds"] == lastresultdict["Seconds"]
             ):
-                isStopped = True
+                stoppedcounter += 1
+                if stoppedcounter == pollingrate - 1:
+                    isStopped = True
 
             #!artificial runterzählen
             for item in rectangleDictArt:
