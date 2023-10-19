@@ -14,7 +14,7 @@ import pstats
 
 importlib.import_module
 
-sys.path.insert(0, "./Util/ndi")prin
+sys.path.insert(0, "./Util/ndi")
 
 
 class Rectangle:
@@ -335,9 +335,7 @@ else:
 
             # rotierer zum periodischen überprüfen
             for item in rectangleDictArt:
-                if (
-                    artdictlist.index(item) == rotiercounter
-                ):
+                if artdictlist.index(item) == rotiercounter:
                     if item == "ScoreHome":
                         resultdict[item] = int(
                             ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
