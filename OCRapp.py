@@ -38,6 +38,7 @@ logname = config["logs"]["logname"]
 log = config["logs"]["log"]
 debugging = config["DEBUGGING"]["JedesBildEinzelnBestaetigen"]
 profiling = config["DEBUGGING"]["profiling"]
+outputresult = config["DEBUGGING"]["outputresult"]
 profilinglines = int(config["DEBUGGING"]["profilingzeilen"])
 
 # Initialize Plugins
@@ -339,7 +340,7 @@ else:
             # rotierer zum periodischen überprüfen
             for item in rectangleDictArt:
                 if artdictlist.index(item) == rotiercounter:
-                    print(artdictlist[rotiercounter], "uhr läuft rotierer")
+                    # print(artdictlist[rotiercounter], "uhr läuft rotierer")
                     if item == "ScoreHome":
                         resultdict[item] = int(
                             ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
@@ -550,7 +551,7 @@ else:
                     cv2.waitKey(0)
             for item in rectangleDictArt:
                 if artdictlist.index(item) == rotiercounter:
-                    print(artdictlist[rotiercounter], "uhr läuft nicht rotierer")
+                    # print(artdictlist[rotiercounter], "uhr läuft nicht rotierer")
                     if item == "ScoreHome":
                         resultdict[item] = int(
                             ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
@@ -630,7 +631,8 @@ else:
                         json.dump(resultdict, f)
                         f.write(os.linesep)
                 lastresultdict = resultdict.copy()
-            print(resultdict)
+            if outputresult == "True":
+                print(resultdict)
         # überlauf und verwaltung der rotation
         if rotiercounter == len(artdictlist) - 1:
             rotiercounter = 0
