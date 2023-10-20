@@ -22,3 +22,7 @@ class OCR:
             batch_size=self.batchsize,
         )
         return ocrresult
+
+    def detect(self, img):
+        detectresult = self.reader.readtext(img, mag_ratio=2)
+        return detectresult
