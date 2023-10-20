@@ -10,7 +10,7 @@ from timeit import default_timer as timer
 import cProfile as profile
 import pstats
 
-# TODO: abtastrate wenn uhr gestoppt und rechtecke augmenten, BUG wenn
+# TODO:rechtecke augmenten
 
 importlib.import_module
 
@@ -105,7 +105,7 @@ for item in rectangleDictArt:
         cv2.imshow("test", rectangleDictArt[item])
         cv2.waitKey(0)
 if lastresultdict != resultdict:
-    if log == "True":  # TODO: das hier als Plugin implementieren
+    if log == "True":
         loglocation = "./logs/" + logname + ".json"
         with open(loglocation, "a") as f:
             json.dump(resultdict, f)
@@ -116,9 +116,10 @@ if lastresultdict != resultdict:
 # loop
 stoppedcounter = 0
 counter = 0
-lengthrectart = len(rectangleDictArt)
 rotiercounter = 0
-artdictlist = list(rectangleDictArt)
+artdictlist = list(rectangleDictArt)  # für länge
+
+
 if profiling == "True":
     for i in range(10):
         start = timer()
@@ -338,6 +339,7 @@ else:
             # rotierer zum periodischen überprüfen
             for item in rectangleDictArt:
                 if artdictlist.index(item) == rotiercounter:
+                    print(artdictlist[rotiercounter], "uhr läuft rotierer")
                     if item == "ScoreHome":
                         resultdict[item] = int(
                             ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
@@ -521,19 +523,7 @@ else:
                                         resultdict[item] = lastresultdict[item] - 1
                                 else:
                                     resultdict[item] = lastresultdict[item]
-            if rotiercounter == len(artdictlist) - 1:
-                rotiercounter = 0
-            else:
-                if (
-                    (artdictlist[rotiercounter] == "HomePenalty1Minutes")
-                    or (artdictlist[rotiercounter] == "HomePenalty2Minutes")
-                    or (artdictlist[rotiercounter] == "GuestPenalty1Minutes")
-                    or (artdictlist[rotiercounter] == "GuestPenalty2Minutes")
-                ):
-                    rotiercounter += 2
 
-                else:
-                    rotiercounter += 1
             print(resultdict)
             if lastresultdict != resultdict:
                 if log == "True":  # TODO: das hier als Plugin implementieren
@@ -559,14 +549,76 @@ else:
                     cv2.imshow("test", rectangleDict[item])
                     cv2.waitKey(0)
             for item in rectangleDictArt:
-                resultdict[item] = int(
-                    ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
-                )
-                if debugging == "True":
-                    print(item + ": ")
-                    print(resultdict[item])
-                    cv2.imshow("test", rectangleDictArt[item])
-                    cv2.waitKey(0)
+                if artdictlist.index(item) == rotiercounter:
+                    print(artdictlist[rotiercounter], "uhr läuft nicht rotierer")
+                    if item == "ScoreHome":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                    elif item == "ScoreGuest":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                    elif item == "HomePenalty1Number":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                    elif item == "HomePenalty1Minutes":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                        resultdict["HomePenalty1Seconds"] = int(
+                            ocrplugin.ReadText(rectangleDictArt["HomePenalty1Seconds"])[
+                                0
+                            ]
+                            or 0
+                        )
+                    elif item == "HomePenalty2Number":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                    elif item == "HomePenalty2Minutes":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                        resultdict["HomePenalty2Seconds"] = int(
+                            ocrplugin.ReadText(rectangleDictArt["HomePenalty2Seconds"])[
+                                0
+                            ]
+                            or 0
+                        )
+                    elif item == "GuestPenalty1Number":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                    elif item == "GuestPenalty1Minutes":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                        resultdict["GuestPenalty1Seconds"] = int(
+                            ocrplugin.ReadText(
+                                rectangleDictArt["GuestPenalty1Seconds"]
+                            )[0]
+                            or 0
+                        )
+                    elif item == "HomePenalty2Number":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                    elif item == "GuestPenalty2Minutes":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
+                        resultdict["GuestPenalty2Seconds"] = int(
+                            ocrplugin.ReadText(
+                                rectangleDictArt["GuestPenalty2Seconds"]
+                            )[0]
+                            or 0
+                        )
+                    elif item == "Period":
+                        resultdict[item] = int(
+                            ocrplugin.ReadText(rectangleDictArt[item])[0] or 0
+                        )
             if resultdict["Seconds"] != lastresultdict["Seconds"]:
                 isStopped = False
                 stoppedcounter = 0
@@ -579,10 +631,23 @@ else:
                         f.write(os.linesep)
                 lastresultdict = resultdict.copy()
             print(resultdict)
-        print("stopped:", isStopped)
+        # überlauf und verwaltung der rotation
+        if rotiercounter == len(artdictlist) - 1:
+            rotiercounter = 0
+        else:
+            if (
+                (artdictlist[rotiercounter] == "HomePenalty1Minutes")
+                or (artdictlist[rotiercounter] == "HomePenalty2Minutes")
+                or (artdictlist[rotiercounter] == "GuestPenalty1Minutes")
+                or (artdictlist[rotiercounter] == "GuestPenalty2Minutes")
+            ):
+                rotiercounter += 2
+
+            else:
+                rotiercounter += 1
+        # auffüllen pollingrate
         end = timer()
         rest = pollingrate - (end - start)
-        # print(rest)
         if rest < 0:
             rest = 0
             print("UPDATERATE KANN NICHT EINGEHALTEN WERDEN, ERGEBNISSE FALSCH")
