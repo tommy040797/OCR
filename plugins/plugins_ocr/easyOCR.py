@@ -13,7 +13,7 @@ class OCR:
         self.reader = easyocr.Reader([self.language], quantize=True)
         print("easyOCR plugin initialized")
 
-    def ReadText(self, img):
+    def Rec(self, img):
         ocrresult = self.reader.recognize(
             img,
             detail=0,
@@ -26,3 +26,13 @@ class OCR:
     def detect(self, img):
         detectresult = self.reader.readtext(img, mag_ratio=2)
         return detectresult
+
+    def ReadText(self, img):
+        ocrresult = self.reader.readtext(
+            img,
+            # detail=1,
+            mag_ratio=2.0,  # ! keine ahnung was es macht, repariert aber die 1 und die 7 wenn sie alleine stehen. vermutlich eingabebilder zu klein ? evtl bilder hochskalieren und ohne testen
+            allowlist=self.whitelist,
+            batch_size=self.batchsize,
+        )
+        return ocrresult
