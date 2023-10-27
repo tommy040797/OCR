@@ -1,0 +1,92 @@
+{
+  "Rectangles": [
+    {
+      "name": "Minutes",
+      "xstart": 900,
+      "ystart": 500,
+      "xend": 1010,
+      "yend": 640,
+      "artificial": "False"
+    },
+    {
+      "name": "Seconds",
+      "xstart": 1047,
+      "ystart": 500,
+      "xend": 1210,
+      "yend": 640,
+      "artificial": "False"
+    },
+    {
+      "name": "ScoreHome",
+      "xstart": 833,
+      "ystart": 156,
+      "xend": 956,
+      "yend": 267,
+      "artificial": "True"
+    },
+    {
+      "name": "ScoreGuest",
+      "xstart": 1115,
+      "ystart": 156,
+      "xend": 1240,
+      "yend": 267,
+      "artificial": "True"
+    },
+    {
+      "name": "HomePenalty1Number",
+      "xstart": 810,
+      "ystart": 300,
+      "xend": 871,
+      "yend": 367,
+      "artificial": "True"
+    },
+    {
+      "name": "HomePenalty1Minutes",
+      "xstart": 895,
+      "ystart": 310,
+      "xend": 933,
+      "yend": 364,
+      "artificial": "True"
+    },
+    {
+      "name": "HomePenalty1Seconds",
+      "xstart": 954,
+      "ystart": 300,
+      "xend": 1033,
+      "yend": 367,
+      "artificial": "True"
+    },
+    {
+      "name": "GuestPenalty1Number",
+      "xstart": 1053,
+      "ystart": 300,
+      "xend": 1107,
+      "yend": 367,
+      "artificial": "True"
+    },
+    {
+      "name": "GuestPenalty1Minutes",
+      "xstart": 1125,
+      "ystart": 300,
+      "xend": 1175,
+      "yend": 367,
+      "artificial": "True"
+    },
+    {
+      "name": "GuestPenalty1Seconds",
+      "xstart": 1202,
+      "ystart": 300,
+      "xend": 1271,
+      "yend": 367,
+      "artificial": "True"
+    },
+    {
+      "name": "Period",
+      "xstart": 920,
+      "ystart": 635,
+      "xend": 961,
+      "yend": 690,
+      "artificial": "True"
+    }
+  ]
+}
