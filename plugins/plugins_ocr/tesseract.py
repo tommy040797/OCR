@@ -14,7 +14,7 @@ class OCR:
 
         print("Tesseract plugin initialized")
 
-    def ReadText(self, img):
+    def Rec(self, img):
         ocrresult = pytesseract.image_to_string(
             img,
             lang=self.language,

@@ -362,48 +362,22 @@ if augmentrectangles == "True":
     cv2.imshow("test", image)
     cv2.waitKey(0)
 
-lastresultdict = {}
-resultdict = {}
-isStopped = True
 
-# erstmaliges befüllen der ergebnisse
 img = inplugin.GetImage()
 rectangleDict = dictcreator.dictRectangles(rectangles, img)
 rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
-for item in rectangleDict:
-    resultdict[item], confidence = ocrplugin.Rec(rectangleDict[item])
-    resultdict[item] = int(resultdict[item] or 0)
-    if debugging == "True":
-        print(item + ": ")
-        print(resultdict[item])
-        cv2.imshow("test", rectangleDict[item])
-        cv2.waitKey(0)
-for item in rectangleDictArt:
-    resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
-    resultdict[item] = int(resultdict[item] or 0)
-    if debugging == "True":
-        print(item + ": ")
-        print(resultdict[item])
-        cv2.imshow("test", rectangleDictArt[item])
-        cv2.waitKey(0)
-if lastresultdict != resultdict:
-    outplugin.putResult(resultdict)
-    lastresultdict = resultdict.copy()
 
+lastresultdict = {}
+resultdict = {}
+isStopped = False
 
-# test = ocrplugin.ReadText(rectangleDictArt["ScoreGuest"])
-# print(test)
-# test = ocrplugin.Recext(rectangleDictArt["ScoreGuest"])
-# print(test)
-# cv2.imshow("test", rectangleDictArt["ScoreGuest"])
-# cv2.waitKey(0)
 
 # loop
 stoppedcounter = 0
-counter = 0
+counter = 1
 rotiercounter = 0
 profilingcounter = 0
-artdictlist = list(rectangleDictArt)  # für länge
+# artdictlist = list(rectangleDictArt)  # für länge
 
 
 while True:
@@ -413,90 +387,21 @@ while True:
         img = inplugin.GetImage()
         rectangleDict = dictcreator.dictRectangles(rectangles, img)
         rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
-
         # read clock
+
         for item in rectangleDict:
-            resultdict[item], confidence = ocrplugin.Rec(rectangleDict[item])
-            resultdict[item] = int(resultdict[item] or 0)
-            if debugging == "True":
-                print(item + ": ")
-                print(resultdict[item])
-                cv2.imshow("test", rectangleDict[item])
-                cv2.waitKey(0)
-        # check if clock is stopped
-        if (
-            resultdict["Minutes"] == lastresultdict["Minutes"]
-            and resultdict["Seconds"] == lastresultdict["Seconds"]
-        ):
-            if stoppedcounter == pollingratenotreziprog - 1:
-                isStopped = True
-                stoppedcounter = 0
-            stoppedcounter += 1
-        else:
-            stoppedcounter = 0
-
-        # rotierer zum periodischen überprüfen
-        for item in rectangleDictArt:
-            resultdict[item] = rotierResolver(
-                rectangleDictArt, item, lastresultdict, artdictlist, rotiercounter
+            cv2.imwrite(
+                "C:/Code/OCR/TrainDataset/" + str(counter) + ".jpg", rectangleDict[item]
             )
-
-        if outputresult == "True":
-            print(resultdict)
-        if lastresultdict != resultdict:
-            outplugin.putResult(resultdict)
-            lastresultdict = resultdict.copy()
-        if counter < pollingratenotreziprog - 1:
             counter += 1
-        else:
-            counter = 0
-    # Uhr ist gestoppt
-    else:
-        img = inplugin.GetImage()
-        rectangleDict = dictcreator.dictRectangles(rectangles, img)
-        rectangleDictArt = dictcreator.dictRectangles(rectanglesartificial, img)
 
-        for item in rectangleDict:
-            resultdict[item], confidence = ocrplugin.Rec(rectangleDict[item])
-            resultdict[item] = int(resultdict[item] or 0)
-            if debugging == "True":
-                print(item + ": ")
-                print(resultdict[item])
-                cv2.imshow("test", rectangleDict[item])
-                cv2.waitKey(0)
-
-        # rotierer wenn uhr gestoppt
         for item in rectangleDictArt:
-            resultdict[item] = rotierResolverPaused(
-                rectangleDictArt, item, artdictlist, rotiercounter
+            cv2.imwrite(
+                "C:/Code/OCR/TrainDataset/" + str(counter) + ".jpg",
+                rectangleDictArt[item],
             )
-
-        if resultdict["Seconds"] != lastresultdict["Seconds"]:
-            isStopped = False
-            stoppedcounter = 0
-
-        if outputresult == "True":
-            print(resultdict)
-        if lastresultdict != resultdict:
-            outplugin.putResult(resultdict)
-            lastresultdict = resultdict.copy()
-    # überlauf und verwaltung der rotation
-
-    if rotiercounter == len(artdictlist) - 1:
-        rotiercounter = 0
-    else:
-        if (
-            (artdictlist[rotiercounter] == "HomePenalty1Minutes")
-            or (artdictlist[rotiercounter] == "HomePenalty2Minutes")
-            or (artdictlist[rotiercounter] == "GuestPenalty1Minutes")
-            or (artdictlist[rotiercounter] == "GuestPenalty2Minutes")
-        ):
-            rotiercounter += 2
-
-        else:
-            rotiercounter += 1
-
-    # auffüllen pollingrate
+            counter += 1
+    # Uhr ist gestoppt
     end = timer()
     rest = pollingrate - (end - start)
     if profiling == "True":

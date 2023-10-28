@@ -16,12 +16,12 @@ class OCR:
     def Rec(self, img):
         ocrresult = self.reader.recognize(
             img,
-            detail=0,
+            # detail=0,
             # mag_ratio=2.0,  # ! keine ahnung was es macht, repariert aber die 1 und die 7 wenn sie alleine stehen. vermutlich eingabebilder zu klein ? evtl bilder hochskalieren und ohne testen
             allowlist=self.whitelist,
             batch_size=self.batchsize,
         )
-        return ocrresult
+        return ocrresult[0][1], ocrresult[0][2]
 
     def detect(self, img):
         detectresult = self.reader.readtext(img, mag_ratio=2)
@@ -32,6 +32,17 @@ class OCR:
             img,
             # detail=1,
             mag_ratio=2.0,  # ! keine ahnung was es macht, repariert aber die 1 und die 7 wenn sie alleine stehen. vermutlich eingabebilder zu klein ? evtl bilder hochskalieren und ohne testen
+            allowlist=self.whitelist,
+            text_threshold=0.3,
+            batch_size=self.batchsize,
+        )
+        return ocrresult
+
+    def Recext(self, img):
+        ocrresult = self.reader.recognize(
+            img,
+            # detail=0,
+            # mag_ratio=2.0,  # ! keine ahnung was es macht, repariert aber die 1 und die 7 wenn sie alleine stehen. vermutlich eingabebilder zu klein ? evtl bilder hochskalieren und ohne testen
             allowlist=self.whitelist,
             batch_size=self.batchsize,
         )
