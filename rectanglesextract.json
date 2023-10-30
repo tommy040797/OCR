@@ -1,0 +1,12 @@
+{
+  "Rectangles": [
+    {
+      "name": "HomePenalty1Minutes",
+      "xstart": 194,
+      "ystart": 237,
+      "xend": 255,
+      "yend": 355,
+      "artificial": "False"
+    }
+  ]
+}

@@ -28,45 +28,71 @@ class Rectangle:
         self.height = yend - ystart
 
 
-def rotierResolver(rectangleDictArt, item, lastresultdict, artdictlist, rotiercounter):
+def rotierResolver(item):
     if artdictlist.index(item) == rotiercounter:
         # print(artdictlist[rotiercounter], "uhr läuft rotierer")
         if item == "ScoreHome":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "ScoreGuest":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "HomePenalty1Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "HomePenalty1Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
-            resultdict["HomePenalty1Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["HomePenalty1Seconds"]) or 0
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["HomePenalty1Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["HomePenalty1Seconds"]
             )
+            resultdict["HomePenalty1Seconds"] = int(
+                resultdict["HomePenalty1Seconds"] or 0
+            )
+
         elif item == "HomePenalty2Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "HomePenalty2Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["HomePenalty2Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["HomePenalty2Seconds"]
+            )
             resultdict["HomePenalty2Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["HomePenalty2Seconds"]) or 0
+                resultdict["HomePenalty2Seconds"] or 0
             )
         elif item == "GuestPenalty1Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "GuestPenalty1Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["GuestPenalty1Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["GuestPenalty1Seconds"]
+            )
             resultdict["GuestPenalty1Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["GuestPenalty1Seconds"]) or 0
+                resultdict["GuestPenalty1Seconds"] or 0
             )
         elif item == "HomePenalty2Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "GuestPenalty2Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["GuestPenalty2Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["GuestPenalty2Seconds"]
+            )
             resultdict["GuestPenalty2Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["GuestPenalty2Seconds"]) or 0
+                resultdict["GuestPenalty1Seconds"] or 0
             )
         elif item == "Period":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
     # falls nicht im rotiercounter ai fill
     else:
+        if isStopped == True:
+            return None
         match item:
             case "HomePenalty1Number":
                 if (
@@ -85,6 +111,8 @@ def rotierResolver(rectangleDictArt, item, lastresultdict, artdictlist, rotierco
                         else:
                             resultdict[item] = lastresultdict[item]
             case "HomePenalty1Seconds":
+                if artdictlist.index(item) - 1 == rotiercounter:
+                    return resultdict
                 if (
                     lastresultdict[item] != 0
                     or lastresultdict["HomePenalty1Minutes"] != 0
@@ -113,6 +141,8 @@ def rotierResolver(rectangleDictArt, item, lastresultdict, artdictlist, rotierco
                         else:
                             resultdict[item] = lastresultdict[item]
             case "HomePenalty2Seconds":
+                if artdictlist.index(item) - 1 == rotiercounter:
+                    return resultdict
                 if (
                     lastresultdict[item] != 0
                     or lastresultdict["HomePenalty2Minutes"] != 0
@@ -141,6 +171,8 @@ def rotierResolver(rectangleDictArt, item, lastresultdict, artdictlist, rotierco
                         else:
                             resultdict[item] = lastresultdict[item]
             case "GuestPenalty1Seconds":
+                if artdictlist.index(item) - 1 == rotiercounter:
+                    return resultdict
                 if (
                     lastresultdict[item] != 0
                     or lastresultdict["GuestPenalty1Minutes"] != 0
@@ -169,6 +201,8 @@ def rotierResolver(rectangleDictArt, item, lastresultdict, artdictlist, rotierco
                         else:
                             resultdict[item] = lastresultdict[item]
             case "GuestPenalty2Seconds":
+                if artdictlist.index(item) - 1 == rotiercounter:
+                    return None
                 if (
                     lastresultdict[item] != 0
                     or lastresultdict["GuestPenalty2Minutes"] != 0
@@ -180,47 +214,70 @@ def rotierResolver(rectangleDictArt, item, lastresultdict, artdictlist, rotierco
                             resultdict[item] = lastresultdict[item] - 1
                     else:
                         resultdict[item] = lastresultdict[item]
-    return resultdict[item]
 
 
-def rotierResolverPaused(rectangleDictArt, item, artdictlist, rotiercounter):
+# not needed
+def rotierResolverPaused(item):
     if artdictlist.index(item) == rotiercounter:
+        print(item)
         # print(artdictlist[rotiercounter], "uhr läuft nicht rotierer")
         if item == "ScoreHome":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "ScoreGuest":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "HomePenalty1Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "HomePenalty1Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["HomePenalty1Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["HomePenalty1Seconds"]
+            )
             resultdict["HomePenalty1Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["HomePenalty1Seconds"]) or 0
+                resultdict["HomePenalty1Seconds"] or 0
             )
         elif item == "HomePenalty2Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "HomePenalty2Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["HomePenalty2Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["HomePenalty2Seconds"]
+            )
             resultdict["HomePenalty2Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["HomePenalty2Seconds"]) or 0
+                resultdict["HomePenalty2Seconds"] or 0
             )
         elif item == "GuestPenalty1Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "GuestPenalty1Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["GuestPenalty1Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["GuestPenalty1Seconds"]
+            )
             resultdict["GuestPenalty1Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["GuestPenalty1Seconds"]) or 0
+                resultdict["GuestPenalty1Seconds"] or 0
             )
         elif item == "HomePenalty2Number":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
         elif item == "GuestPenalty2Minutes":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
+            resultdict["GuestPenalty2Seconds"], confidence = ocrplugin.Rec(
+                rectangleDictArt["GuestPenalty2Seconds"]
+            )
             resultdict["GuestPenalty2Seconds"] = int(
-                ocrplugin.Rec(rectangleDictArt["GuestPenalty2Seconds"]) or 0
+                resultdict["GuestPenalty1Seconds"] or 0
             )
         elif item == "Period":
-            resultdict[item] = int(ocrplugin.Rec(rectangleDictArt[item]) or 0)
-    return resultdict[item]
+            resultdict[item], confidence = ocrplugin.Rec(rectangleDictArt[item])
+            resultdict[item] = int(resultdict[item] or 0)
 
 
 # READ CURRENT CONFIG
@@ -232,6 +289,8 @@ ocrpluginname = config["InterfacesToUse"]["ocr"]
 pollingrate = 1 / float(config["Frequency"]["pollingrate"])
 pollingratenotreziprog = float(config["Frequency"]["pollingrate"])
 augmentrectangles = config["Default"]["augmentrectangles"]
+clockup = dictcreator.str2bool(config["Default"]["clockcountingup"])
+outputclockup = dictcreator.str2bool(config["Default"]["clockoutputcountingup"])
 
 debugging = config["DEBUGGING"]["JedesBildEinzelnBestaetigen"]
 profiling = dictcreator.str2bool(config["DEBUGGING"]["profiling"])
@@ -375,7 +434,7 @@ for item in rectangleDict:
     resultdict[item] = int(resultdict[item] or 0)
     if debugging == "True":
         print(item + ": ")
-        print(resultdict[item])
+        print(resultdict[item], "confidence: ", confidence)
         cv2.imshow("test", rectangleDict[item])
         cv2.waitKey(0)
 for item in rectangleDictArt:
@@ -383,7 +442,7 @@ for item in rectangleDictArt:
     resultdict[item] = int(resultdict[item] or 0)
     if debugging == "True":
         print(item + ": ")
-        print(resultdict[item])
+        print(resultdict[item], "confidence: ", confidence)
         cv2.imshow("test", rectangleDictArt[item])
         cv2.waitKey(0)
 if lastresultdict != resultdict:
@@ -391,7 +450,7 @@ if lastresultdict != resultdict:
     lastresultdict = resultdict.copy()
 
 
-# test = ocrplugin.ReadText(rectangleDictArt["ScoreGuest"])
+# test = ocrplugin.ReadText(rectangleDict["ScoreGuest"])
 # print(test)
 # test = ocrplugin.Recext(rectangleDictArt["ScoreGuest"])
 # print(test)
@@ -420,9 +479,14 @@ while True:
             resultdict[item] = int(resultdict[item] or 0)
             if debugging == "True":
                 print(item + ": ")
-                print(resultdict[item])
+                print(resultdict[item], "confidence: ", confidence)
                 cv2.imshow("test", rectangleDict[item])
                 cv2.waitKey(0)
+
+        # rotierer zum periodischen überprüfen
+        for item in rectangleDictArt:
+            rotierResolver(item)
+
         # check if clock is stopped
         if (
             resultdict["Minutes"] == lastresultdict["Minutes"]
@@ -431,21 +495,11 @@ while True:
             if stoppedcounter == pollingratenotreziprog - 1:
                 isStopped = True
                 stoppedcounter = 0
-            stoppedcounter += 1
+            else:
+                stoppedcounter += 1  # maybe ohne else
         else:
             stoppedcounter = 0
 
-        # rotierer zum periodischen überprüfen
-        for item in rectangleDictArt:
-            resultdict[item] = rotierResolver(
-                rectangleDictArt, item, lastresultdict, artdictlist, rotiercounter
-            )
-
-        if outputresult == "True":
-            print(resultdict)
-        if lastresultdict != resultdict:
-            outplugin.putResult(resultdict)
-            lastresultdict = resultdict.copy()
         if counter < pollingratenotreziprog - 1:
             counter += 1
         else:
@@ -461,40 +515,39 @@ while True:
             resultdict[item] = int(resultdict[item] or 0)
             if debugging == "True":
                 print(item + ": ")
-                print(resultdict[item])
+                print(resultdict[item], "confidence: ", confidence)
                 cv2.imshow("test", rectangleDict[item])
                 cv2.waitKey(0)
 
         # rotierer wenn uhr gestoppt
         for item in rectangleDictArt:
-            resultdict[item] = rotierResolverPaused(
-                rectangleDictArt, item, artdictlist, rotiercounter
-            )
+            rotierResolver(item)
 
         if resultdict["Seconds"] != lastresultdict["Seconds"]:
             isStopped = False
             stoppedcounter = 0
 
-        if outputresult == "True":
-            print(resultdict)
-        if lastresultdict != resultdict:
-            outplugin.putResult(resultdict)
-            lastresultdict = resultdict.copy()
-    # überlauf und verwaltung der rotation
+    if lastresultdict != resultdict:
+        outplugin.putResult(resultdict)
+        lastresultdict = resultdict.copy()
+
+    if outputresult == "True":
+        print(resultdict)
 
     if rotiercounter == len(artdictlist) - 1:
         rotiercounter = 0
     else:
-        if (
-            (artdictlist[rotiercounter] == "HomePenalty1Minutes")
-            or (artdictlist[rotiercounter] == "HomePenalty2Minutes")
-            or (artdictlist[rotiercounter] == "GuestPenalty1Minutes")
-            or (artdictlist[rotiercounter] == "GuestPenalty2Minutes")
-        ):
-            rotiercounter += 2
+        if len(artdictlist) != 0:
+            if (
+                (artdictlist[rotiercounter] == "HomePenalty1Minutes")
+                or (artdictlist[rotiercounter] == "HomePenalty2Minutes")
+                or (artdictlist[rotiercounter] == "GuestPenalty1Minutes")
+                or (artdictlist[rotiercounter] == "GuestPenalty2Minutes")
+            ):
+                rotiercounter += 2
 
-        else:
-            rotiercounter += 1
+            else:
+                rotiercounter += 1
 
     # auffüllen pollingrate
     end = timer()
@@ -506,6 +559,7 @@ while True:
     if rest < 0:
         rest = 0
         print("UPDATERATE KANN NICHT EINGEHALTEN WERDEN, ERGEBNISSE FALSCH")
+    print(isStopped)
     time.sleep(rest)
 
 

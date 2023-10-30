@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 
 
 # TODO: Überprüfen ob Rechtecke überhaupt im bild sind
@@ -23,3 +22,7 @@ def preProcessing(img, blur, grayscale, thresholding, negative):
         img = 255 - img
 
     return img
+
+
+def str2bool(v):
+    return v.lower() in ("True", "true")
